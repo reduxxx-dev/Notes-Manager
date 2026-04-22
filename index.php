@@ -1,3 +1,14 @@
+<?php
+require_once "config/Database.php";
+require_once "classes/Note.php";
+
+$database = new Database();
+$db = $database->connect();
+
+$note = new Note($db);
+$notes = $note->getAll();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +18,14 @@
 </head>
 
 <body>
+
+<?php while ($row = $notes->fetch(PDO::FETCH_ASSOC)) : ?>
+    <div>
+        <h3><?php echo $row['title']; ?></h3>
+        <p><?php echo $row['content']; ?></p>
+        <small><?php echo $row['created_at']; ?></small>
+    </div>
+<?php endwhile; ?>
 
 <div class="container" style="margin-top: 50px; max-width: 600px;">
 
