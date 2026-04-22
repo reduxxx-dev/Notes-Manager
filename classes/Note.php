@@ -36,4 +36,14 @@ class Note {
 
         return $stmt->execute();
     }
+    
+    public function update($id, $content) {
+    $query = "UPDATE " . $this->table . " SET content = :content WHERE id = :id";
+    $stmt = $this->conn->prepare($query);
+
+    $stmt->bindParam(':content', $content);
+    $stmt->bindParam(':id', $id);
+
+    return $stmt->execute();
+}
 }

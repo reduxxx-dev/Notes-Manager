@@ -7,6 +7,17 @@ $db = $database->connect();
 
 $note = new Note($db);
 
+// UPDATE
+if (isset($_POST['update_id'])) {
+    $id = $_POST['update_id'];
+    $content = $_POST['updated_note'];
+
+    $note->update($id, $content);
+
+    header("Location: index.php");
+    exit();
+}
+
 // CREATE
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = $_POST['note'];
@@ -61,16 +72,23 @@ $notes = $note->getAll();
     <!-- NOTES LIST -->
     <ul class="list-group mt-3">
         <?php while ($row = $notes->fetch(PDO::FETCH_ASSOC)) : ?>
-            <li class="list-group-item d-flex justify-content-between">
-                <div>
-                    <strong><?php echo htmlspecialchars($row['title']); ?></strong><br>
-                    <?php echo htmlspecialchars($row['content']); ?><br>
-                    <small><?php echo $row['created_at']; ?></small>
-                </div>
-                <div>
-                    <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
-                </div>
-            </li>
+            <li class="list-group-item">
+
+    <form method="POST" class="d-flex justify-content-between">
+
+        <div style="width: 70%;">
+            <textarea name="updated_note" class="form-control"><?php echo htmlspecialchars($row['content']); ?></textarea>
+            <input type="hidden" name="update_id" value="<?php echo $row['id']; ?>">
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-sm btn-warning">Update</button>
+            <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
+        </div>
+
+    </form>
+
+</li>
         <?php endwhile; ?>
     </ul>
 
