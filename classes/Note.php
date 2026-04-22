@@ -18,11 +18,10 @@ class Note {
     }
 
     // CREATE
-    public function create($title, $content) {
-        $query = "INSERT INTO " . $this->table . " (title, content) VALUES (:title, :content)";
+    public function create($content) {
+        $query = "INSERT INTO " . $this->table . " (title, content) VALUES ('Note', :content)";
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(':title', $title);
         $stmt->bindParam(':content', $content);
 
         return $stmt->execute();
