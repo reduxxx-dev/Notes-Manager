@@ -1,4 +1,13 @@
+
 <?php
+
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
 require_once "config/Database.php";
 require_once "classes/Note.php";
 
@@ -12,18 +21,18 @@ if (isset($_POST['update_id'])) {
     $id = $_POST['update_id'];
     $content = $_POST['updated_note'];
 
-    $note->update($id, $content);
+    $note->update($id, $content, $_SESSION['user_id']);
 
     header("Location: index.php");
     exit();
 }
 
 // CREATE
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_POST['note'])) {
     $content = $_POST['note'];
 
     if (!empty($content)) {
-        $note->create($content);
+        $note->create($content, $_SESSION['user_id']);
     }
 
     header("Location: index.php");
@@ -33,14 +42,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // DELETE
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $note->delete($id);
+    $note->delete($id, $_SESSION['user_id']);
 
     header("Location: index.php");
     exit();
 }
 
 // READ
-$notes = $note->getAll();
+$notes = $note->getAll($_SESSION['user_id']);
 ?>
 
 <!DOCTYPE html>
