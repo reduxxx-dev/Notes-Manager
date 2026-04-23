@@ -1,4 +1,3 @@
-
 <?php
 
 session_start();
@@ -59,7 +58,19 @@ $notes = $note->getAll($_SESSION['user_id']);
     <title>Notes Manager</title>
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 </head>
+<div class="container mt-3">
+    <div style="display: flex; justify-content: flex-end; align-items: center;">
 
+        <span style="font-size: 20px; font-weight: 500; margin-right: 15px;">
+            Welcome, <strong><?php echo $_SESSION['user']; ?></strong>
+        </span>
+
+        <a href="logout.php" class="btn btn-danger btn-sm">
+            Logout
+        </a>
+
+    </div>
+</div>
 <body>
 
 <div class="container" style="margin-top: 50px; max-width: 600px;">
