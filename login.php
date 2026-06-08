@@ -2,14 +2,20 @@
 session_start();
 require_once "config/Database.php";
 
+if (isset($_SESSION['user_id'])) {
+    header("Location: index.php");
+    exit();
+}
+
 $database = new Database();
 $db = $database->connect();
 
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
     $stmt = $db->prepare("SELECT * FROM users WHERE username = :username");
     $stmt->bindParam(':username', $username);
@@ -18,17 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password'])) {
+
         $_SESSION['user'] = $user['username'];
         $_SESSION['user_id'] = $user['id'];
-        
+
         header("Location: index.php");
         exit();
+
     } else {
         $error = "Wrong username or password";
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -55,20 +62,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
 
                     <form method="POST">
+
                         <div class="form-group mb-3">
-                            <input type="text" name="username" class="form-control"
-                                   placeholder="Username">
+                            <input type="text"
+                                   name="username"
+                                   class="form-control"
+                                   placeholder="Username"
+                                   required>
                         </div>
 
                         <div class="form-group mb-3">
-                            <input type="password" name="password" class="form-control"
-                                   placeholder="Password">
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Password"
+                                   required>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">
                             Login
                         </button>
+
                     </form>
+
+                    <?php if (!empty($error)) : ?>
+                        <p class="text-danger text-center mt-3">
+                            <?php echo $error; ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <div class="text-center mt-3">
+                        <a href="register.php">Create an account</a>
+                    </div>
 
                 </div>
             </div>
@@ -81,7 +106,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </body>
 </html>
-
-<p style="color:red; text-align:center;">
-    <?php if (!empty($error)) echo $error; ?>
-</p>
